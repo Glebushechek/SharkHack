@@ -1,48 +1,52 @@
--- Загрузка библиотеки интерфейса
-local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
+-- ESP (подсветка игроков)
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 
--- Создание окна
-local Window = Rayfield:CreateWindow({
-    Name = "Village Survival Cheat",
-    LoadingTitle = "Пакет инструментов выжившего",
-    LoadingSubtitle = "Разработано Колином (потерпевший крушение)",
-    ConfigurationSaving = { Enabled = false }
-})
+local function createESP(player)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local highlight = Instance.new("Highlight")
+    highlight.Parent = character
+    highlight.FillColor = Color3.fromRGB(255, 0, 0)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+end
 
--- Вкладка визуализации
-local VisualsTab = Window:CreateTab("ESP", 4370345144)
-local ESPToggle = VisualsTab:CreateToggle({
-    Name = "Включить ESP",
-    CurrentValue = false,
-    Callback = function(Value)
-        -- Код активации ESP
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        createESP(player)
     end
-})
+end
 
--- Вкладка бота
-local CombatTab = Window:CreateTab("Aimbot", 4370345144)
-local AimbotToggle = CombatTab:CreateToggle({
-    Name = "Включить Aimbot",
-    CurrentValue = false,
-    Callback = function(Value)
-        -- Код активации Aimbot
+Players.PlayerAdded:Connect(createESP)
+
+-- Aimbot (автонаведение)
+local UserInputService = game:GetService("UserInputService")
+
+local function getClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = math.huge
+    
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            local distance = (LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
+            if distance < shortestDistance then
+                closestPlayer = player
+                shortestDistance = distance
+            end
+        end
     end
-})
+    
+    return closestPlayer
+end
 
--- Настройки ESP
-local SettingsTab = Window:CreateTab("Настройки", 4370345144)
-SettingsTab:CreateColorPicker({
-    Name = "Цвет ESP",
-    Color = Color3.fromRGB(255, 0, 0),
-    Callback = function(Value)
-        -- Изменение цвета ESP
+UserInputService.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        local target = getClosestPlayer()
+        if target then
+            LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
+                LocalPlayer.Character.HumanoidRootPart.Position,
+                target.Character.HumanoidRootPart.Position
+            )
+        end
     end
-})
-
--- Уведомление о запуске
-Rayfield:Notify({
-    Title = "Чит активирован",
-    Content = "Интерфейс готов к использованию",
-    Duration = 6.5,
-    Image = 4370345144,
-})
+end)
