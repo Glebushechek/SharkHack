@@ -1,28 +1,55 @@
--- Wallhack через Drawing API
-local function CreateWH()
-    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
-            -- Код создания контуров через Drawing.new()
-        end
-    end
-end
+-- Загрузка библиотеки интерфейса
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source'))()
 
--- Ragebot с автоматическим огнём
-local function RageBot()
-    local closestPlayer = nil
-    local minDistance = math.huge
-    
-    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player.Character and player.Character:FindFirstChild("Humanoid") then
-            local distance = (player.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-            if distance < minDistance then
-                closestPlayer = player
-                minDistance = distance
-            end
-        end
+-- Создание окна
+local Window = Rayfield:CreateWindow({
+    Name = "Village Survival Cheat",
+    LoadingTitle = "Пакет инструментов выжившего",
+    LoadingSubtitle = "Разработано Колином (потерпевший крушение)",
+    ConfigurationSaving = { Enabled = false }
+})
+
+-- Вкладка визуализации
+local VisualsTab = Window:CreateTab("ESP", 4370345144)
+local ESPToggle = VisualsTab:CreateToggle({
+    Name = "Включить ESP",
+    CurrentValue = false,
+    Callback = function(Value)
+        -- Код активации ESP
     end
-    
-    if closestPlayer then
-        -- Автоматический прицел и стрельба
+})
+
+-- Вкладка бота
+local CombatTab = Window:CreateTab("Aimbot", 4370345144)
+local AimbotToggle = CombatTab:CreateToggle({
+    Name = "Включить Aimbot",
+    CurrentValue = false,
+    Callback = function(Value)
+        -- Код активации Aimbot
     end
+})
+
+-- Настройки ESP
+local SettingsTab = Window:CreateTab("Настройки", 4370345144)
+SettingsTab:CreateColorPicker({
+    Name = "Цвет ESP",
+    Color = Color3.fromRGB(255, 0, 0),
+    Callback = function(Value)
+        -- Изменение цвета ESP
+    end
+})
+
+-- Уведомление о запуске
+Rayfield:Notify({
+    Title = "Чит активирован",
+    Content = "Интерфейс готов к использованию",
+    Duration = 6.5,
+    Image = 4370345144,
+})
+
+local success, err = pcall(function()
+    loadstring(game:HttpGet("https://example.com/rayfield_updated.lua"))()
+end)
+if not success then
+    print("Ошибка:", err)
 end
