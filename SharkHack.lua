@@ -1,52 +1,28 @@
--- ESP (подсветка игроков)
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-
-local function createESP(player)
-    local character = player.Character or player.CharacterAdded:Wait()
-    local highlight = Instance.new("Highlight")
-    highlight.Parent = character
-    highlight.FillColor = Color3.fromRGB(255, 0, 0)
-    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-end
-
-for _, player in ipairs(Players:GetPlayers()) do
-    if player ~= LocalPlayer then
-        createESP(player)
+-- Wallhack через Drawing API
+local function CreateWH()
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            -- Код создания контуров через Drawing.new()
+        end
     end
 end
 
-Players.PlayerAdded:Connect(createESP)
-
--- Aimbot (автонаведение)
-local UserInputService = game:GetService("UserInputService")
-
-local function getClosestPlayer()
+-- Ragebot с автоматическим огнём
+local function RageBot()
     local closestPlayer = nil
-    local shortestDistance = math.huge
+    local minDistance = math.huge
     
-    for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character then
-            local distance = (LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).Magnitude
-            if distance < shortestDistance then
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            local distance = (player.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+            if distance < minDistance then
                 closestPlayer = player
-                shortestDistance = distance
+                minDistance = distance
             end
         end
     end
     
-    return closestPlayer
-end
-
-UserInputService.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then
-        local target = getClosestPlayer()
-        if target then
-            LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(
-                LocalPlayer.Character.HumanoidRootPart.Position,
-                target.Character.HumanoidRootPart.Position
-            )
-        end
+    if closestPlayer then
+        -- Автоматический прицел и стрельба
     end
-end)
+end
